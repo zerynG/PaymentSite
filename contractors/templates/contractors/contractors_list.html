@@ -1,0 +1,43 @@
+{% extends 'base_with_sidebar.html' %}
+
+{% block main_content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1>Реестр Исполнителей</h1>
+        <a href="http://127.0.0.1:8000/home/" class="btn btn-secondary">Назад</a>
+    </div>
+    
+    <a href="{% url 'contractors:contractor_create' %}" class="btn btn-primary mb-3">
+        Добавить исполнителя
+    </a>
+    
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ФИО</th>
+                <th>Тип оформления</th>
+                <th>Налоговая ставка</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for contractor in contractors %}
+            <tr>
+                <td>{{ contractor.last_name }} {{ contractor.first_name }} {{ contractor.middle_name|default:'' }}</td>
+                <td>{{ contractor.get_contract_type_display }}</td>
+                <td>{{ contractor.tax_rate }}%</td>
+                <td>
+                    <a href="{% url 'contractors:contractor_detail' contractor.pk %}" class="btn btn-sm btn-info">Просмотр</a>
+                    <a href="{% url 'contractors:contractor_edit' contractor.pk %}" class="btn btn-sm btn-warning">Редактировать</a>
+                    <a href="{% url 'contractors:contractor_delete' contractor.pk %}" class="btn btn-sm btn-danger">Удалить</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4" class="text-center">Исполнители не найдены</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

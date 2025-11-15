@@ -1,0 +1,80 @@
+from django.db import models
+from django.core.validators import MinValueValidator, MaxValueValidator
+
+
+class Employee(models.Model):
+    TAX_RATE_CHOICES = [
+        ('30.2', '30.2% (стандартная)'),
+        ('7.6', '7.6% (льготная)'),
+    ]
+
+    last_name = models.CharField(max_length=100, verbose_name='Фамилия')
+    first_name = models.CharField(max_length=100, verbose_name='Имя')
+    middle_name = models.CharField(max_length=100, blank=True, null=True, verbose_name='Отчество')
+    position = models.CharField(max_length=200, verbose_name='Должность')
+    salary = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        verbose_name='Заработная плата в месяц',
+        validators=[MinValueValidator(0)]
+    )
+    tax_rate = models.CharField(
+        max_length=10,
+        choices=TAX_RATE_CHOICES,
+        default='30.2',
+        verbose_name='Налоговая ставка (%)'
+    )
+    is_active = models.BooleanField(default=True, verbose_name='Активный сотрудник')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = 'Сотрудник'
+        verbose_name_plural = 'Сотрудники'
+        ordering = ['last_name', 'first_name']
+
+    def __str__(self):
+        if self.middle_name:
+            return f"{self.last_name} {self.first_name} {self.middle_name}"
+        return f"{self.last_name} {self.first_name}"
+
+    def get_full_name(self):
+        parts = [self.last_name, self.first_name]
+        if self.middle_name:
+            parts.append(self.middle_name)
+        return " ".join(parts)
+
+    def calculate_daily_rate(self, working_days_in_month):
+        """Рассчитывает стоимость одного рабочего дня"""
+        if working_days_in_month <= 0:
+            return 0
+        base_salary = float(self.salary)
+        tax_amount = base_salary * (float(self.tax_rate) / 100)
+        total_cost = base_salary + tax_amount
+        return total_cost / working_days_in_month
+
+    def calculate_work_cost(self, start_date, end_date, working_days_per_month):
+        """
+        Рассчитывает стоимость работы за период
+        working_days_per_month: словарь {год-месяц: количество рабочих дней}
+        """
+        from datetime import datetime, timedelta
+        from collections import defaultdict
+
+        # Группируем дни по месяцам
+        monthly_days = defaultdict(int)
+        current_date = start_date
+
+        while current_date <= end_date:
+            month_key = f"{current_date.year}-{current_date.month:02d}"
+            monthly_days[month_key] += 1
+            current_date += timedelta(days=1)
+
+        total_cost = 0
+
+        for month_key, days_count in monthly_days.items():
+            if month_key in working_days_per_month:
+                daily_rate = self.calculate_daily_rate(working_days_per_month[month_key])
+                total_cost += daily_rate * days_count
+
+        return total_cost

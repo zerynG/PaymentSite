@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Система расчета стоимости IT-проекта</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #4361ee;
+            --secondary: #3a0ca3;
+            --accent: #f72585;
+            --light: #4cc9f0;
+            --dark: #1d3557;
+            --success: #4ade80;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --gradient: linear-gradient(135deg, #4361ee, #3a0ca3, #7209b7);
+            --gradient-light: linear-gradient(135deg, #4cc9f0, #4361ee);
+            --text-dark: #1e293b;
+            --text-light: #64748b;
+            --bg-light: #f8fafc;
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-light);
+            min-height: 100vh;
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+
+        .header {
+            background: var(--gradient);
+            padding: 15px 30px;
+            box-shadow: var(--shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffffff' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
+            opacity: 0.1;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            z-index: 1;
+        }
+
+        .logo {
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 24px;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .company-info h1 {
+            font-size: 28px;
+            color: white;
+            margin-bottom: 5px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .company-contacts {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.9);
+            display: flex;
+            gap: 15px;
+        }
+
+        .company-contacts div {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            z-index: 1;
+        }
+
+        .user-welcome {
+            text-align: right;
+        }
+
+        .user-welcome .username {
+            font-weight: bold;
+            color: white;
+            font-size: 16px;
+        }
+
+        .user-welcome .role {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .btn {
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-logout {
+            background: rgba(239, 68, 68, 0.8);
+            border-color: rgba(239, 68, 68, 0.5);
+        }
+
+        .btn-logout:hover {
+            background: rgba(239, 68, 68, 0.9);
+        }
+
+        .navigation {
+            background: white;
+            padding: 0 30px;
+            box-shadow: var(--shadow);
+            margin-bottom: 30px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .tabs {
+            display: flex;
+            list-style: none;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            padding: 15px 20px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-light);
+            position: relative;
+        }
+
+        .tab:hover {
+            color: var(--primary);
+            background: rgba(67, 97, 238, 0.05);
+        }
+
+        .tab.active {
+            color: var(--primary);
+            border-bottom: 3px solid var(--primary);
+            font-weight: 600;
+        }
+
+        .tab.active::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gradient-light);
+            border-radius: 0 0 3px 3px;
+        }
+
+        .tab-link {
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+            height: 100%;
+        }
+
+        .tab-link:hover {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .welcome-section {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: var(--shadow);
+            text-align: center;
+            margin-bottom: 30px;
+            border-left: 5px solid var(--accent);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .welcome-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 200px;
+            height: 200px;
+            background: var(--gradient-light);
+            opacity: 0.05;
+            border-radius: 50%;
+            transform: translate(30%, -30%);
+        }
+
+        .welcome-section h2 {
+            color: var(--dark);
+            margin-bottom: 20px;
+            font-size: 32px;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .welcome-section p {
+            font-size: 18px;
+            color: var(--text-light);
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .calculator-section {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+            margin-bottom: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .calculator-section::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: var(--gradient);
+        }
+
+        .section-title {
+            color: var(--dark);
+            margin-bottom: 25px;
+            font-size: 28px;
+            text-align: center;
+            position: relative;
+            display: inline-block;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--gradient);
+            border-radius: 2px;
+        }
+
+        .calculator-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--dark);
+            font-weight: 600;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            background: var(--bg-light);
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            color: var(--text-dark);
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+        }
+
+        .calculator-result {
+            background: var(--gradient-light);
+            padding: 25px;
+            border-radius: 12px;
+            margin-top: 20px;
+            color: white;
+            box-shadow: var(--shadow);
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .result-item:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        .result-label {
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .result-value {
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .btn-calculate {
+            background: var(--gradient);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+            width: 100%;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-calculate::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: 0.5s;
+        }
+
+        .btn-calculate:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-calculate:hover::before {
+            left: 100%;
+        }
+
+        .about-section {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+            margin-bottom: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .about-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: var(--gradient);
+        }
+
+        .about-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .about-text {
+            line-height: 1.7;
+            color: var(--text-light);
+        }
+
+        .about-text p {
+            margin-bottom: 15px;
+        }
+
+        .about-features {
+            list-style: none;
+        }
+
+        .about-features li {
+            padding: 12px 0;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .about-features li:hover {
+            background: rgba(67, 97, 238, 0.05);
+            padding-left: 10px;
+            border-radius: 8px;
+        }
+
+        .about-features li:last-child {
+            border-bottom: none;
+        }
+
+        .feature-icon {
+            color: var(--success);
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        @media (max-width: 1024px) {
+            .tabs {
+                overflow-x: auto;
+                flex-wrap: nowrap;
+            }
+
+            .tab {
+                white-space: nowrap;
+                padding: 15px;
+            }
+
+            .calculator-form, .about-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+                padding: 15px;
+            }
+
+            .logo-container {
+                justify-content: center;
+            }
+
+            .company-contacts {
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            .user-info {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .navigation {
+                padding: 0 15px;
+            }
+
+            .welcome-section, .calculator-section, .about-section {
+                padding: 25px;
+            }
+
+            .welcome-section h2 {
+                font-size: 24px;
+            }
+
+            .welcome-section p {
+                font-size: 16px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header {
+                padding: 15px;
+            }
+
+            .navigation {
+                padding: 0 15px;
+            }
+
+            .tab {
+                padding: 12px;
+                font-size: 14px;
+            }
+
+            .main-content {
+                padding: 0 15px;
+            }
+
+            .calculator-section, .about-section {
+                padding: 20px;
+            }
+
+            .section-title {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo-container">
+            <div class="logo">IT</div>
+            <div class="company-info">
+                <h1>ТехноИнновации</h1>
+                <div class="company-contacts">
+                    <div>📞 +7 (495) 123-45-67</div>
+                    <div>✉️ info@technoinnovations.ru</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="user-info">
+            <div class="user-welcome">
+                <div class="username">Всеволод Овчинников</div>
+                <div class="role">Глобальный администратор</div>
+            </div>
+            <a href="/logout/" class="btn btn-logout">Выйти</a>
+        </div>
+    </div>
+
+    <div class="navigation">
+        <ul class="tabs">
+            <li class="tab active">
+                <span class="tab-link">
+                    <span>Главная</span>
+                </span>
+            </li>
+            <li class="tab">
+                <a href="{% url 'workspace:workspace_dashboard' 1 %}" class="tab-link">
+                    <span>Рабочая область</span>
+                </a>
+            </li>
+            <li class="tab">
+                <a href="{% url 'customers:customer_list' %}" class="tab-link">
+                    <span>Реестр заказчиков</span>
+                </a>
+            </li>
+            <li class="tab">
+                <a href="{% url 'contractors:contractors_list' %}" class="tab-link">
+                    <span>Реестр Исполнителей</span>
+                </a>
+            </li>
+            <li class="tab">
+                <a href="{% url 'equipment:list' %}" class="tab-link">
+                    <span>Реестр оборудования</span>
+                </a>
+            </li>
+            <li class="tab">
+                <a href="{% url 'employees:employee_list' %}" class="tab-link">
+                    <span>Реестр сотрудников</span>
+                </a>
+            </li>
+            <li class="tab">
+                <a href="{% url 'subcontractors:list' %}" class="tab-link">
+                    <span>Реестр Субподрядчиков</span>
+                </a>
+            </li>
+            <li class="tab">
+                <a href="/staff/users/" class="tab-link">
+                    <span>Создание пользователей</span>
+                </a>
+            </li>
+            <li class="tab">
+                <a href="{% url 'workspace_control:workspace_list' %}" class="tab-link">
+                    <span>Создание рабочей области</span>
+                </a>
+            </li>
+            <li class="tab">
+                <a href="{% url 'projects:project_list' %}" class="tab-link">
+                    <span>Управление проектом</span>
+                </a>
+            </li>
+            <li class="tab">
+                <a href="/commercial/" class="tab-link">
+                    <span>Форма коммерческого предложения</span>
+                </a>
+            </li>
+            <li class="tab">
+                <a href="/nma/" class="tab-link">
+                    <span>Форма стоимости НМА</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="main-content">
+        <div class="welcome-section">
+            <h2>Добро пожаловать в систему расчета стоимости IT-проектов</h2>
+            <p>Комплексная платформа для управления проектами, расчета стоимости разработки,
+            ведения реестров и формирования коммерческих предложений. Выберите нужный раздел
+            в меню выше для начала работы.</p>
+        </div>
+
+        <div class="calculator-section">
+            <h3 class="section-title">Рассчитайте стоимость и срок проекта</h3>
+            <div class="calculator-form">
+                <div>
+                    <div class="form-group">
+                        <label for="project-type">Тип проекта</label>
+                        <select id="project-type" class="form-control">
+                            <option value="">Выберите тип проекта</option>
+                            <option value="website">Веб-сайт</option>
+                            <option value="mobile">Мобильное приложение</option>
+                            <option value="crm">CRM система</option>
+                            <option value="erp">ERP система</option>
+                            <option value="ecommerce">Интернет-магазин</option>
+                            <option value="custom">Индивидуальная разработка</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="complexity">Сложность проекта</label>
+                        <select id="complexity" class="form-control">
+                            <option value="">Выберите сложность</option>
+                            <option value="simple">Простой</option>
+                            <option value="medium">Средний</option>
+                            <option value="complex">Сложный</option>
+                            <option value="very-complex">Очень сложный</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="team-size">Размер команды</label>
+                        <select id="team-size" class="form-control">
+                            <option value="">Выберите размер команды</option>
+                            <option value="small">Малая (1-3 человека)</option>
+                            <option value="medium">Средняя (4-6 человек)</option>
+                            <option value="large">Большая (7-10 человек)</option>
+                            <option value="xlarge">Очень большая (10+ человек)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="form-group">
+                        <label for="timeline">Желаемые сроки (месяцы)</label>
+                        <input type="number" id="timeline" class="form-control" min="1" max="24" placeholder="Введите количество месяцев">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="features">Количество основных функций</label>
+                        <input type="number" id="features" class="form-control" min="1" max="50" placeholder="Введите количество функций">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="integrations">Количество интеграций</label>
+                        <input type="number" id="integrations" class="form-control" min="0" max="20" placeholder="Введите количество интеграций">
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn-calculate" id="calculate-btn">Рассчитать стоимость и сроки</button>
+
+            <div class="calculator-result" id="result" style="display: none;">
+                <div class="result-item">
+                    <span class="result-label">Предварительная стоимость:</span>
+                    <span class="result-value" id="cost-result">0 руб.</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">Предполагаемые сроки:</span>
+                    <span class="result-value" id="timeline-result">0 месяцев</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">Рекомендуемая команда:</span>
+                    <span class="result-value" id="team-result">0 человек</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="about-section">
+            <h3 class="section-title">О нашей компании</h3>
+            <div class="about-content">
+                <div class="about-text">
+                    <p>Компания "ТехноИнновации" специализируется на разработке и внедрении IT-решений для бизнеса. Мы предлагаем полный цикл услуг: от анализа требований до поддержки готовых продуктов.</p>
+                    <p>Наша команда состоит из опытных разработчиков, аналитиков и менеджеров проектов, готовых реализовать решения любой сложности.</p>
+                    <p>Мы гордимся нашим подходом к работе, который сочетает в себе глубокое понимание бизнес-процессов и техническую экспертизу.</p>
+                </div>
+                <div class="about-features">
+                    <li><span class="feature-icon">✓</span> Более 10 лет на рынке IT-услуг</li>
+                    <li><span class="feature-icon">✓</span> Реализовано более 200 проектов</li>
+                    <li><span class="feature-icon">✓</span> Команда из 50+ специалистов</li>
+                    <li><span class="feature-icon">✓</span> Сертифицированные технологии</li>
+                    <li><span class="feature-icon">✓</span> Поддержка 24/7</li>
+                    <li><span class="feature-icon">✓</span> Гарантия качества</li>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const tabs = document.querySelectorAll('.tab');
+            const currentPath = window.location.pathname;
+
+            // Функция для определения активной вкладки на основе текущего URL
+            function setActiveTab() {
+                tabs.forEach(tab => {
+                    const link = tab.querySelector('a');
+                    if (link) {
+                        const href = link.getAttribute('href');
+                        // Проверяем, соответствует ли текущий URL ссылке вкладки
+                        if (currentPath.includes(href) ||
+                            (currentPath === '/' && link.href.includes('workspace_dashboard'))) {
+                            tab.classList.add('active');
+                        } else {
+                            tab.classList.remove('active');
+                        }
+                    } else {
+                        // Для вкладки "Главная" (без ссылки)
+                        if (currentPath === '/' || currentPath === '/home/') {
+                            tab.classList.add('active');
+                        } else {
+                            tab.classList.remove('active');
+                        }
+                    }
+                });
+            }
+
+            // Устанавливаем активную вкладку при загрузке
+            setActiveTab();
+
+            // Обработчик клика по вкладкам
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function(e) {
+                    const link = this.querySelector('a');
+                    if (link && !e.target.classList.contains('tab-link')) {
+                        // Если клик был не по ссылке, переходим по ссылке
+                        window.location.href = link.href;
+                    }
+                    // Если клик был по ссылке, стандартное поведение браузера сработает само
+                });
+            });
+
+            // Имитация загрузки данных
+            setTimeout(() => {
+                const welcomeSection = document.querySelector('.welcome-section p');
+                welcomeSection.innerHTML = 'Добро пожаловать, <strong>Всеволод Овчинников</strong>!<br>Сегодня ' +
+                    new Date().toLocaleDateString('ru-RU', {
+                        weekday: 'long',
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                    }) + '. Готовы к работе?';
+            }, 1000);
+
+            // Калькулятор стоимости проекта
+            const calculateBtn = document.getElementById('calculate-btn');
+            const resultDiv = document.getElementById('result');
+
+            calculateBtn.addEventListener('click', function() {
+                // Получаем значения из формы
+                const projectType = document.getElementById('project-type').value;
+                const complexity = document.getElementById('complexity').value;
+                const teamSize = document.getElementById('team-size').value;
+                const timeline = parseInt(document.getElementById('timeline').value) || 0;
+                const features = parseInt(document.getElementById('features').value) || 0;
+                const integrations = parseInt(document.getElementById('integrations').value) || 0;
+
+                // Проверяем, что все поля заполнены
+                if (!projectType || !complexity || !teamSize || timeline === 0 || features === 0) {
+                    alert('Пожалуйста, заполните все обязательные поля');
+                    return;
+                }
+
+                // Базовая стоимость в зависимости от типа проекта
+                let baseCost = 0;
+                switch(projectType) {
+                    case 'website': baseCost = 100000; break;
+                    case 'mobile': baseCost = 150000; break;
+                    case 'crm': baseCost = 300000; break;
+                    case 'erp': baseCost = 500000; break;
+                    case 'ecommerce': baseCost = 200000; break;
+                    case 'custom': baseCost = 250000; break;
+                }
+
+                // Множитель сложности
+                let complexityMultiplier = 1;
+                switch(complexity) {
+                    case 'simple': complexityMultiplier = 0.8; break;
+                    case 'medium': complexityMultiplier = 1; break;
+                    case 'complex': complexityMultiplier = 1.5; break;
+                    case 'very-complex': complexityMultiplier = 2; break;
+                }
+
+                // Расчет стоимости
+                let cost = baseCost * complexityMultiplier;
+                cost += features * 15000; // Каждая функция добавляет стоимость
+                cost += integrations * 25000; // Каждая интеграция добавляет стоимость
+
+                // Расчет сроков
+                let estimatedTimeline = Math.max(timeline, Math.ceil(features / 5) + Math.ceil(integrations / 2));
+                if (complexity === 'complex') estimatedTimeline *= 1.2;
+                if (complexity === 'very-complex') estimatedTimeline *= 1.5;
+
+                // Расчет команды
+                let recommendedTeam = 2; // Минимальная команда
+                if (features > 10) recommendedTeam = 3;
+                if (features > 20) recommendedTeam = 4;
+                if (features > 30) recommendedTeam = 5;
+                if (complexity === 'complex' || complexity === 'very-complex') recommendedTeam += 1;
+
+                // Форматирование чисел
+                const formattedCost = new Intl.NumberFormat('ru-RU').format(Math.round(cost));
+
+                // Отображение результатов
+                document.getElementById('cost-result').textContent = formattedCost + ' руб.';
+                document.getElementById('timeline-result').textContent = Math.round(estimatedTimeline) + ' месяцев';
+                document.getElementById('team-result').textContent = recommendedTeam + ' человек';
+
+                // Показываем результаты
+                resultDiv.style.display = 'block';
+
+                // Анимация появления результатов
+                resultDiv.style.opacity = '0';
+                resultDiv.style.transform = 'translateY(20px)';
+                resultDiv.style.display = 'block';
+
+                setTimeout(() => {
+                    resultDiv.style.transition = 'all 0.5s ease';
+                    resultDiv.style.opacity = '1';
+                    resultDiv.style.transform = 'translateY(0)';
+                }, 10);
+            });
+        });
+
+        // Предотвращаем изменение внешнего вида ссылок при наведении
+        document.addEventListener('DOMContentLoaded', function() {
+            const links = document.querySelectorAll('.tab-link');
+            links.forEach(link => {
+                link.addEventListener('mouseenter', function() {
+                    this.style.color = 'inherit';
+                    this.style.textDecoration = 'none';
+                });
+                link.addEventListener('mouseleave', function() {
+                    this.style.color = 'inherit';
+                    this.style.textDecoration = 'none';
+                });
+            });
+        });
+    </script>
+</body>
+</html>

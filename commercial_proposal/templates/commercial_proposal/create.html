@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Создание коммерческого предложения</h2>
+    <form method="post">
+        {% csrf_token %}
+
+        <div class="card mb-4">
+            <div class="card-header">Основная информация</div>
+            <div class="card-body">
+                {{ form.as_p }}
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header">Услуги</div>
+            <div class="card-body">
+                {{ formset.management_form }}
+                <div id="services-formset">
+                    {% for form in formset %}
+                    <div class="service-form mb-3 p-3 border rounded">
+                        {{ form.as_p }}
+                    </div>
+                    {% endfor %}
+                </div>
+                <button type="button" class="btn btn-secondary" id="add-service">Добавить услугу</button>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Сохранить</button>
+    </form>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const addButton = document.getElementById('add-service');
+    const formset = document.getElementById('services-formset');
+    const totalForms = document.getElementById('id_services-TOTAL_FORMS');
+    let formCount = parseInt(totalForms.value);
+
+    addButton.addEventListener('click', function() {
+        const newForm = formset.querySelector('.service-form').cloneNode(true);
+        newForm.innerHTML = newForm.innerHTML.replace(/services-\d+/g, `services-${formCount}`);
+        newForm.innerHTML = newForm.innerHTML.replace(/services\.\d+/g, `services.${formCount}`);
+        formset.appendChild(newForm);
+        formCount++;
+        totalForms.value = formCount;
+    });
+});
+</script>
+{% endblock %}

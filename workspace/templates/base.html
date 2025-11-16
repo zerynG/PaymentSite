@@ -10,7 +10,7 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
-            <a class="navbar-brand" href="/">IT Projects Manager</a>
+            <a class="navbar-brand" href="{% url 'login:home' %}">IT Projects Manager</a>
             <div class="navbar-nav ms-auto">
                 {% if user.is_authenticated %}
                     <span class="navbar-text me-3">Привет, {{ user.username }}</span>

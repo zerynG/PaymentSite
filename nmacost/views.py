@@ -2,6 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse
 from django.template.loader import render_to_string
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 from django.core.paginator import Paginator
 from django.db.models import Sum
 from io import BytesIO
@@ -9,6 +10,9 @@ from io import BytesIO
 # Проверка доступности библиотек
 try:
     from xhtml2pdf import pisa
+    from reportlab.pdfbase import pdfmetrics
+    from reportlab.pdfbase.ttfonts import TTFont
+    from reportlab.lib.fonts import addMapping
 
     HAS_PDF = True
 except ImportError:
@@ -153,14 +157,21 @@ def export_pdf(request, nmacost_id):
     })
 
     result = BytesIO()
-    pdf = pisa.pisaDocument(BytesIO(html_string.encode("UTF-8")), result)
+    
+    # Используем правильную кодировку для кириллицы
+    # xhtml2pdf требует строку в UTF-8, не BytesIO
+    # Передаем строку напрямую, а не в BytesIO
+    pdf = pisa.pisaDocument(
+        html_string,
+        result
+    )
 
     if not pdf.err:
         response = HttpResponse(result.getvalue(), content_type='application/pdf')
         response['Content-Disposition'] = f'attachment; filename="nmacost_{nmacost.id}.pdf"'
         return response
 
-    return HttpResponse('Ошибка при создании PDF')
+    return HttpResponse(f'Ошибка при создании PDF: {pdf.err}')
 
 
 @login_required
@@ -215,3 +226,40 @@ def export_word(request, nmacost_id):
     response = HttpResponse(content, content_type='text/plain')
     response['Content-Disposition'] = f'attachment; filename="nmacost_{nmacost.id}.txt"'
     return response
+
+
+@login_required
+def nmacost_delete(request, nmacost_id):
+    """Удаление записи НМА"""
+    nmacost = get_object_or_404(NMACost, id=nmacost_id)
+
+    if request.method == 'POST':
+        project_name = nmacost.project_name
+        nmacost.delete()
+        messages.success(request, f'Стоимость НМА "{project_name}" успешно удалена!')
+        return redirect('nmacost:nmacost-list')
+
+    return render(request, 'nmacost/nmacost_confirm_delete.html', {
+        'nmacost': nmacost
+    })
+
+
+@login_required
+def resource_delete(request, nmacost_id, resource_id):
+    """Удаление ресурса из записи НМА"""
+    nmacost = get_object_or_404(NMACost, id=nmacost_id)
+    resource = get_object_or_404(ResourceItem, id=resource_id, nmacost=nmacost)
+
+    if request.method == 'POST':
+        resource.delete()
+        # Пересчитываем общую стоимость НМА
+        total = sum(res.total_cost for res in nmacost.resources.all())
+        nmacost.total_cost = total
+        nmacost.save()
+        messages.success(request, 'Ресурс успешно удален!')
+        return redirect('nmacost:nmacost-detail', nmacost_id=nmacost.id)
+
+    return render(request, 'nmacost/resource_confirm_delete.html', {
+        'nmacost': nmacost,
+        'resource': resource
+    })

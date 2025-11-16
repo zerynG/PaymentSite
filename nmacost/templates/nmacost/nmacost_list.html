@@ -54,6 +54,13 @@
                                         📄
                                     </a>
                                     {% endif %}
+                                    <form method="post" action="{% url 'nmacost:nmacost-delete' nmacost.id %}" style="display:inline;">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-outline-danger" title="Удалить"
+                                                onclick="return confirm('Вы уверены, что хотите удалить эту стоимость НМА?')">
+                                            🗑️
+                                        </button>
+                                    </form>
                                 </div>
                             </td>
                         </tr>

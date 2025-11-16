@@ -76,7 +76,7 @@ def workspace_delete(request, pk):
 @user_passes_test(is_admin)
 def workspace_members(request, pk):
     workspace = get_object_or_404(Workspace, pk=pk)
-    members = workspace.members.all()
+    members = workspace.control_members.all()
 
     if request.method == 'POST':
         form = WorkspaceMemberForm(request.POST)

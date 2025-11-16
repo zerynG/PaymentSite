@@ -12,7 +12,7 @@ def workspace_dashboard(request, workspace_id):
     # Проверка доступа пользователя к workspace
     if not WorkspaceMember.objects.filter(workspace=workspace, user=request.user).exists():
         messages.error(request, "У вас нет доступа к этой рабочей области")
-        return redirect('home')
+        return redirect('login:home')
 
     projects = workspace.projects.all()
     members = workspace.members.all()

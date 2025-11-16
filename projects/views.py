@@ -24,7 +24,7 @@ def project_create(request):
             project.created_by = request.user
             project.save()
             messages.success(request, 'Проект успешно создан!')
-            return redirect('project_detail', pk=project.pk)
+            return redirect('projects:project_detail', pk=project.pk)
     else:
         form = ProjectForm()
     return render(request, 'projects/project_form.html', {'form': form})
@@ -41,7 +41,7 @@ def project_detail(request, pk):
             form.save()
             project.calculate_costs()
             messages.success(request, 'Проект успешно обновлен!')
-            return redirect('project_detail', pk=project.pk)
+            return redirect('projects:project_detail', pk=project.pk)
     else:
         form = ProjectForm(instance=project)
 
@@ -65,7 +65,7 @@ def add_resource(request, project_pk):
             resource.save()
             project.calculate_costs()
             messages.success(request, 'Ресурс успешно добавлен!')
-            return redirect('project_detail', pk=project.pk)
+            return redirect('projects:project_detail', pk=project.pk)
     else:
         form = ProjectResourceForm()
 
@@ -82,9 +82,9 @@ def delete_resource(request, resource_pk):
 
     if project.created_by != request.user:
         messages.error(request, 'У вас нет прав для удаления этого ресурса!')
-        return redirect('project_detail', pk=project.pk)
+        return redirect('projects:project_detail', pk=project.pk)
 
     resource.delete()
     project.calculate_costs()
     messages.success(request, 'Ресурс успешно удален!')
-    return redirect('project_detail', pk=project.pk)
+    return redirect('projects:project_detail', pk=project.pk)

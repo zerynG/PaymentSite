@@ -15,7 +15,7 @@
                         <strong>Название:</strong> {{ workspace.name }}<br>
                         <strong>Поддомен:</strong> {{ workspace.subdomain }}<br>
                         <strong>Администратор:</strong> {{ workspace.admin.get_full_name|default:workspace.admin.username }}<br>
-                        <strong>Участников:</strong> {{ workspace.members.count }}
+                        <strong>Участников:</strong> {{ workspace.control_members.count }}
                     </div>
 
                     <p class="text-danger">

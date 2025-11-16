@@ -18,7 +18,7 @@
                     <p class="card-text">
                         <strong>Поддомен:</strong> {{ workspace.subdomain }}<br>
                         <strong>Админ:</strong> {{ workspace.admin.get_full_name|default:workspace.admin.username }}<br>
-                        <strong>Участников:</strong> {{ workspace.members.count }}
+                        <strong>Участников:</strong> {{ workspace.control_members.count }}
                     </p>
                 </div>
                 <div class="card-footer">

@@ -34,7 +34,7 @@ def employee_create(request):
         if form.is_valid():
             employee = form.save()
             messages.success(request, f'Сотрудник {employee.get_full_name()} успешно добавлен!')
-            return redirect('employee_list')
+            return redirect('employees:employee_list')
     else:
         form = EmployeeForm()
 
@@ -51,7 +51,7 @@ def employee_edit(request, pk):
         if form.is_valid():
             employee = form.save()
             messages.success(request, f'Данные сотрудника {employee.get_full_name()} обновлены!')
-            return redirect('employee_list')
+            return redirect('employees:employee_list')
     else:
         form = EmployeeForm(instance=employee)
 
@@ -67,7 +67,7 @@ def employee_delete(request, pk):
         employee_name = employee.get_full_name()
         employee.delete()
         messages.success(request, f'Сотрудник {employee_name} удален!')
-        return redirect('employee_list')
+        return redirect('employees:employee_list')
 
     context = {'employee': employee}
     return render(request, 'employees/employee_confirm_delete.html', context)
@@ -75,6 +75,10 @@ def employee_delete(request, pk):
 
 def employee_toggle_active(request, pk):
     """Активация/деактивация сотрудника"""
+    if request.method != 'POST':
+        messages.error(request, 'Неверный метод запроса')
+        return redirect('employees:employee_list')
+    
     employee = get_object_or_404(Employee, pk=pk)
     employee.is_active = not employee.is_active
     employee.save()
@@ -82,7 +86,7 @@ def employee_toggle_active(request, pk):
     action = "активирован" if employee.is_active else "деактивирован"
     messages.success(request, f'Сотрудник {employee.get_full_name()} {action}!')
 
-    return redirect('employee_list')
+    return redirect('employees:employee_list')
 
 
 def calculate_employee_cost(request):

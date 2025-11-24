@@ -2,6 +2,15 @@
 
 {% block main_content %}
 <div class="container mt-4">
+    <!-- Кнопка Назад -->
+    <div class="row mb-3">
+        <div class="col-md-12">
+            <a href="http://127.0.0.1:8000/home/" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Назад
+            </a>
+        </div>
+    </div>
+
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2>Список стоимостей НМА</h2>
         <a href="{% url 'nmacost:nmacost-create' %}" class="btn btn-primary">
@@ -35,33 +44,31 @@
                             <td>{{ nmacost.resources.count }}</td>
                             <td>{{ nmacost.created_at|date:"d.m.Y H:i" }}</td>
                             <td>
-                                <div class="btn-group btn-group-sm">
-                                    <a href="{% url 'nmacost:nmacost-detail' nmacost.id %}"
-                                       class="btn btn-outline-primary" title="Просмотреть">
-                                        👁️
-                                    </a>
-                                    <a href="{% url 'nmacost:nmacost-edit' nmacost.id %}"
-                                       class="btn btn-outline-secondary" title="Редактировать">
-                                        ✏️
-                                    </a>
-                                    <a href="{% url 'nmacost:resource-add' nmacost.id %}"
-                                       class="btn btn-outline-success" title="Добавить ресурс">
-                                        ➕
-                                    </a>
-                                    {% if has_pdf %}
-                                    <a href="{% url 'nmacost:export-pdf' nmacost.id %}"
-                                       class="btn btn-outline-danger" title="Скачать PDF">
-                                        📄
-                                    </a>
-                                    {% endif %}
-                                    <form method="post" action="{% url 'nmacost:nmacost-delete' nmacost.id %}" style="display:inline;">
-                                        {% csrf_token %}
-                                        <button type="submit" class="btn btn-outline-danger" title="Удалить"
-                                                onclick="return confirm('Вы уверены, что хотите удалить эту стоимость НМА?')">
-                                            🗑️
-                                        </button>
-                                    </form>
-                                </div>
+                                <a href="{% url 'nmacost:nmacost-detail' nmacost.id %}"
+                                   class="btn btn-sm btn-info" title="Просмотреть">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="{% url 'nmacost:nmacost-edit' nmacost.id %}"
+                                   class="btn btn-sm btn-warning" title="Редактировать">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="{% url 'nmacost:resource-add' nmacost.id %}"
+                                   class="btn btn-sm btn-success" title="Добавить ресурс">
+                                    <i class="fas fa-plus"></i>
+                                </a>
+                                {% if has_pdf %}
+                                <a href="{% url 'nmacost:export-pdf' nmacost.id %}"
+                                   class="btn btn-sm btn-danger" title="Скачать PDF">
+                                    <i class="fas fa-file-pdf"></i>
+                                </a>
+                                {% endif %}
+                                <form method="post" action="{% url 'nmacost:nmacost-delete' nmacost.id %}" style="display:inline;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-danger" title="Удалить"
+                                            onclick="return confirm('Вы уверены, что хотите удалить эту стоимость НМА?')">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
                             </td>
                         </tr>
                         {% endfor %}

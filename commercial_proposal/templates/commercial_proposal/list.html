@@ -3,6 +3,15 @@
 
 {% block main_content %}
 <div class="container mt-4">
+    <!-- Кнопка Назад -->
+    <div class="row mb-3">
+        <div class="col-md-12">
+            <a href="http://127.0.0.1:8000/home/" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Назад
+            </a>
+        </div>
+    </div>
+
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2>Коммерческие предложения</h2>
         <a href="{% url 'commercial_proposal:create_proposal' %}" class="btn btn-primary">Создать новое</a>
@@ -28,7 +37,9 @@
                     <td>{{ proposal.creation_date }}</td>
                     <td>{{ proposal.total_cost }} руб.</td>
                     <td>
-                        <a href="{% url 'commercial_proposal:proposal_detail' proposal.pk %}" class="btn btn-sm btn-info">Просмотр</a>
+                        <a href="{% url 'commercial_proposal:proposal_detail' proposal.pk %}" class="btn btn-sm btn-info">
+                            <i class="fas fa-eye"></i>
+                        </a>
                         <a href="{% url 'commercial_proposal:download_pdf' proposal.pk %}" class="btn btn-sm btn-danger">PDF</a>
                     </td>
                 </tr>

@@ -5,6 +5,15 @@
 
 {% block main_content %}
 <div class="container-fluid">
+    <!-- Кнопка Назад -->
+    <div class="row mb-3">
+        <div class="col-12">
+            <a href="http://127.0.0.1:8000/home/" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Назад
+            </a>
+        </div>
+    </div>
+
     <div class="row mb-4">
         <div class="col">
             <h1 class="h3">Реестр субподрядчиков</h1>
@@ -75,31 +84,32 @@
                                 </span>
                             </td>
                             <td>
-                                <div class="btn-group btn-group-sm">
-                                    <!-- Временно убрали просмотр -->
-                                    {% if perms.subcontractors.change_subcontractor %}
-                                    <a href="{% url 'subcontractors:edit' subcontractor.pk %}"
-                                       class="btn btn-outline-primary" title="Редактировать">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-                                    <form method="post" action="{% url 'subcontractors:toggle_active' subcontractor.pk %}"
-                                          class="d-inline">
-                                        {% csrf_token %}
-                                        <button type="submit" class="btn btn-outline-warning"
-                                                title="{% if subcontractor.is_active %}Деактивировать{% else %}Активировать{% endif %}">
-                                            <i class="fas {% if subcontractor.is_active %}fa-toggle-on{% else %}fa-toggle-off{% endif %}"></i>
-                                        </button>
-                                    </form>
-                                    {% endif %}
-                                    {% if perms.subcontractors.delete_subcontractor %}
-                                    <button type="button" class="btn btn-outline-danger"
-                                            data-bs-toggle="modal"
-                                            data-bs-target="#deleteModal{{ subcontractor.pk }}"
-                                            title="Удалить">
-                                        <i class="fas fa-trash"></i>
+                                <a href="{% url 'subcontractors:detail' subcontractor.pk %}"
+                                   class="btn btn-sm btn-info" title="Просмотреть">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                {% if perms.subcontractors.change_subcontractor %}
+                                <a href="{% url 'subcontractors:edit' subcontractor.pk %}"
+                                   class="btn btn-sm btn-warning" title="Редактировать">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <form method="post" action="{% url 'subcontractors:toggle_active' subcontractor.pk %}"
+                                      class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-secondary"
+                                            title="{% if subcontractor.is_active %}Деактивировать{% else %}Активировать{% endif %}">
+                                        <i class="fas {% if subcontractor.is_active %}fa-toggle-on{% else %}fa-toggle-off{% endif %}"></i>
                                     </button>
-                                    {% endif %}
-                                </div>
+                                </form>
+                                {% endif %}
+                                {% if perms.subcontractors.delete_subcontractor %}
+                                <button type="button" class="btn btn-sm btn-danger"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#deleteModal{{ subcontractor.pk }}"
+                                        title="Удалить">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                                {% endif %}
 
                                 <!-- Модальное окно удаления -->
                                 {% if perms.subcontractors.delete_subcontractor %}

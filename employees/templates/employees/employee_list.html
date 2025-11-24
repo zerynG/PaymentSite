@@ -76,30 +76,26 @@
                                 </span>
                             </td>
                             <td>
-                                <div class="btn-group btn-group-sm">
-                                    <!-- ИСПРАВЛЕННАЯ ССЫЛКА -->
-                                    <a href="{% url 'employees:employee_edit' employee.pk %}"
-                                       class="btn btn-outline-primary" title="Редактировать">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
+                                <a href="{% url 'employees:employee_edit' employee.pk %}"
+                                   class="btn btn-sm btn-warning" title="Редактировать">
+                                    <i class="fas fa-edit"></i>
+                                </a>
 
-                                    <!-- ИСПРАВЛЕННАЯ ССЫЛКА -->
-                                    <form method="post" action="{% url 'employees:employee_toggle_active' employee.pk %}"
-                                          class="d-inline">
-                                        {% csrf_token %}
-                                        <button type="submit" class="btn btn-outline-warning"
-                                                title="{% if employee.is_active %}Деактивировать{% else %}Активировать{% endif %}">
-                                            <i class="fas fa-{% if employee.is_active %}toggle-on{% else %}toggle-off{% endif %}"></i>
-                                        </button>
-                                    </form>
-
-                                    <button type="button" class="btn btn-outline-danger"
-                                            data-bs-toggle="modal"
-                                            data-bs-target="#deleteModal{{ employee.pk }}"
-                                            title="Удалить">
-                                        <i class="fas fa-trash"></i>
+                                <form method="post" action="{% url 'employees:employee_toggle_active' employee.pk %}"
+                                      class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-secondary"
+                                            title="{% if employee.is_active %}Деактивировать{% else %}Активировать{% endif %}">
+                                        <i class="fas fa-{% if employee.is_active %}toggle-on{% else %}toggle-off{% endif %}"></i>
                                     </button>
-                                </div>
+                                </form>
+
+                                <button type="button" class="btn btn-sm btn-danger"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#deleteModal{{ employee.pk }}"
+                                        title="Удалить">
+                                    <i class="fas fa-trash"></i>
+                                </button>
 
                                 <!-- Модальное окно подтверждения удаления -->
                                 <div class="modal fade" id="deleteModal{{ employee.pk }}" tabindex="-1">

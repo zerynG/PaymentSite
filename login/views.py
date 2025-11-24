@@ -69,7 +69,58 @@ def register_view(request):
 def home_view(request):
     if not request.user.is_authenticated:
         return redirect('login:auth')
-    return render(request, 'login/home.html')
+    
+    # Получаем информацию о пользователе
+    user = request.user
+    
+    # Получаем полное имя из профиля
+    full_name_parts = []
+    if user.last_name:
+        full_name_parts.append(user.last_name)
+    if user.first_name:
+        full_name_parts.append(user.first_name)
+    
+    # Пытаемся получить отчество из профиля
+    try:
+        profile = user.profile
+        if profile and profile.patronymic:
+            full_name_parts.append(profile.patronymic)
+    except AttributeError:
+        # Профиль не существует, пропускаем отчество
+        pass
+    
+    # Формируем полное имя
+    full_name = ' '.join(full_name_parts) if full_name_parts else user.get_full_name() or user.username
+    
+    # Определяем роль/права доступа
+    user_roles = []
+    
+    # Проверяем, является ли пользователь суперпользователем
+    if user.is_superuser:
+        user_roles.append('Глобальный администратор')
+    elif user.is_staff:
+        user_roles.append('Персонал')
+    
+    # Получаем группы пользователя
+    groups = user.groups.all()
+    if groups.exists():
+        group_names = [group.name for group in groups]
+        user_roles.extend(group_names)
+    
+    # Если нет ролей, показываем стандартное сообщение
+    if not user_roles:
+        user_roles.append('Пользователь')
+    
+    # Объединяем роли в строку
+    role_display = ', '.join(user_roles)
+    
+    context = {
+        'user_full_name': full_name,
+        'user_role': role_display,
+        'user_profile': getattr(user, 'profile', None),
+    }
+    
+    return render(request, 'login/home.html', context)
 
 
 def logout_view(request):

@@ -58,7 +58,7 @@
                                 <form method="post" action="{% url 'nmacost:resource-delete' nmacost.id resource.id %}" style="display:inline;">
                                     {% csrf_token %}
                                     <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Вы уверены, что хотите удалить этот ресурс?')">
-                                        <i class="fas fa-trash"></i> Удалить
+                                        <i class="fas fa-trash"></i>
                                     </button>
                                 </form>
                             </td>
@@ -82,11 +82,13 @@
 
     <div class="mt-3">
         <a href="{% url 'nmacost:nmacost-list' %}" class="btn btn-secondary">Назад к списку</a>
-        <a href="{% url 'nmacost:nmacost-edit' nmacost.id %}" class="btn btn-warning">Редактировать</a>
+        <a href="{% url 'nmacost:nmacost-edit' nmacost.id %}" class="btn btn-sm btn-warning">
+            <i class="fas fa-edit"></i>
+        </a>
         <form method="post" action="{% url 'nmacost:nmacost-delete' nmacost.id %}" style="display:inline;">
             {% csrf_token %}
-            <button type="submit" class="btn btn-danger" onclick="return confirm('Вы уверены, что хотите удалить эту стоимость НМА?')">
-                <i class="fas fa-trash"></i> Удалить
+            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Вы уверены, что хотите удалить эту стоимость НМА?')">
+                <i class="fas fa-trash"></i>
             </button>
         </form>
     </div>

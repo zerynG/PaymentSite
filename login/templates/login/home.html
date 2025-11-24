@@ -1,9 +1,12 @@
+{% load static %}
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ru" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Система расчета стоимости IT-проекта</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="{% static 'css/dark-theme.css' %}" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -161,6 +164,83 @@
             position: sticky;
             top: 0;
             z-index: 100;
+        }
+
+        /* Темная тема для home.html */
+        [data-theme="dark"] body {
+            background: #1a1a1a;
+            color: #e0e0e0;
+        }
+
+        [data-theme="dark"] .navigation {
+            background: #2d2d2d !important;
+            border-bottom: 1px solid #404040;
+        }
+
+        [data-theme="dark"] .tab {
+            color: #b0b0b0 !important;
+        }
+
+        [data-theme="dark"] .tab:hover {
+            color: #4cc9f0 !important;
+            background: rgba(76, 201, 240, 0.1) !important;
+        }
+
+        [data-theme="dark"] .tab.active {
+            color: #4cc9f0 !important;
+            border-bottom-color: #4cc9f0 !important;
+        }
+
+        [data-theme="dark"] .welcome-section,
+        [data-theme="dark"] .calculator-section,
+        [data-theme="dark"] .about-section {
+            background: #2d2d2d !important;
+            color: #e0e0e0 !important;
+            border-color: #404040 !important;
+        }
+
+        [data-theme="dark"] .form-control,
+        [data-theme="dark"] .form-group select {
+            background: #3a3a3a !important;
+            border-color: #404040 !important;
+            color: #e0e0e0 !important;
+        }
+
+        [data-theme="dark"] .form-control:focus,
+        [data-theme="dark"] .form-group select:focus {
+            background: #3a3a3a !important;
+            border-color: #4cc9f0 !important;
+            color: #e0e0e0 !important;
+        }
+
+        [data-theme="dark"] .btn-calculate {
+            background: #4361ee !important;
+            color: white !important;
+        }
+
+        [data-theme="dark"] .btn-calculate:hover {
+            background: #3a0ca3 !important;
+        }
+
+        [data-theme="dark"] .calculator-result {
+            background: #3a3a3a !important;
+            border-color: #404040 !important;
+        }
+
+        [data-theme="dark"] .result-label {
+            color: #b0b0b0 !important;
+        }
+
+        [data-theme="dark"] .result-value {
+            color: #4cc9f0 !important;
+        }
+
+        [data-theme="dark"] .about-features li {
+            color: #e0e0e0 !important;
+        }
+
+        [data-theme="dark"] .section-title {
+            color: #e0e0e0 !important;
         }
 
         .tabs {
@@ -576,9 +656,13 @@
 
         <div class="user-info">
             <div class="user-welcome">
-                <div class="username">Всеволод Овчинников</div>
-                <div class="role">Глобальный администратор</div>
+                <div class="username">{% if user_full_name %}{{ user_full_name }}{% else %}{{ user.username }}{% endif %}</div>
+                <div class="role">{% if user_role %}{{ user_role }}{% else %}Пользователь{% endif %}</div>
             </div>
+            <button id="theme-toggle-btn" class="btn" style="margin-right: 10px;" title="Переключить тему">
+                <i class="fas fa-moon"></i>
+                <span id="theme-toggle-text">Темная тема</span>
+            </button>
             <a href="/logout/" class="btn btn-logout">Выйти</a>
         </div>
     </div>
@@ -799,7 +883,8 @@
             // Имитация загрузки данных
             setTimeout(() => {
                 const welcomeSection = document.querySelector('.welcome-section p');
-                welcomeSection.innerHTML = 'Добро пожаловать, <strong>Всеволод Овчинников</strong>!<br>Сегодня ' +
+                const userName = '{% if user_full_name %}{{ user_full_name }}{% else %}{{ user.username }}{% endif %}';
+                welcomeSection.innerHTML = 'Добро пожаловать, <strong>' + userName + '</strong>!<br>Сегодня ' +
                     new Date().toLocaleDateString('ru-RU', {
                         weekday: 'long',
                         year: 'numeric',
@@ -903,5 +988,6 @@
             });
         });
     </script>
+    <script src="{% static 'js/theme-toggle.js' %}"></script>
 </body>
 </html>

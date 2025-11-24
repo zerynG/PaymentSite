@@ -2,6 +2,15 @@
 
 {% block main_content %}
 <div class="container mt-4">
+    <!-- Кнопка Назад -->
+    <div class="row mb-3">
+        <div class="col-md-12">
+            <a href="http://127.0.0.1:8000/home/" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Назад
+            </a>
+        </div>
+    </div>
+
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1>Рабочие области</h1>
         <a href="{% url 'workspace_control:workspace_create' %}" class="btn btn-primary">
@@ -22,17 +31,15 @@
                     </p>
                 </div>
                 <div class="card-footer">
-                    <div class="btn-group btn-group-sm">
-                        <a href="{% url 'workspace_control:workspace_edit' workspace.pk %}" class="btn btn-outline-primary">
-                            <i class="fas fa-edit"></i>
-                        </a>
-                        <a href="{% url 'workspace_control:workspace_members' workspace.pk %}" class="btn btn-outline-secondary">
-                            <i class="fas fa-users"></i>
-                        </a>
-                        <a href="{% url 'workspace_control:workspace_delete' workspace.pk %}" class="btn btn-outline-danger">
-                            <i class="fas fa-trash"></i>
-                        </a>
-                    </div>
+                    <a href="{% url 'workspace_control:workspace_edit' workspace.pk %}" class="btn btn-sm btn-warning">
+                        <i class="fas fa-edit"></i>
+                    </a>
+                    <a href="{% url 'workspace_control:workspace_members' workspace.pk %}" class="btn btn-sm btn-secondary">
+                        <i class="fas fa-users"></i>
+                    </a>
+                    <a href="{% url 'workspace_control:workspace_delete' workspace.pk %}" class="btn btn-sm btn-danger">
+                        <i class="fas fa-trash"></i>
+                    </a>
                 </div>
             </div>
         </div>

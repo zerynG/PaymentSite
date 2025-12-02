@@ -55,10 +55,11 @@ class Equipment(models.Model):
             raise ValidationError({
                 'operational_cost': 'Для арендованного оборудования необходимо указать эксплуатационную стоимость'
             })
-        if self.acquisition_type == 'rent' and self.operational_cost < self.service_cost_per_unit:
-            raise ValidationError({
-                'service_cost_per_unit': 'Стоимость услуг не может быть ниже эксплуатационной стоимости для арендованного оборудования'
-            })
+        if self.acquisition_type == 'rent' and self.operational_cost is not None and self.service_cost_per_unit is not None:
+            if self.operational_cost < self.service_cost_per_unit:
+                raise ValidationError({
+                    'service_cost_per_unit': 'Стоимость услуг не может быть ниже эксплуатационной стоимости для арендованного оборудования'
+                })
 
     def calculate_service_cost(self, quantity):
         """Расчет стоимости услуг"""

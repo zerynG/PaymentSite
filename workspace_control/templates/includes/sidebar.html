@@ -81,6 +81,12 @@
                 </a>
             </li>
             <li class="nav-item">
+                <a class="nav-link {% if 'itcost' in request.path %}active{% endif %}" href="{% url 'itcost:dashboard' %}">
+                    <i class="fas fa-calculator me-2"></i>
+                    Система расчета стоимости
+                </a>
+            </li>
+            <li class="nav-item">
                 <a class="nav-link {% if 'user_management' in request.path %}active{% endif %}" href="/staff/users/">
                     <i class="fas fa-user-plus me-2"></i>
                     Создание пользователей

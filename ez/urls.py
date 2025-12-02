@@ -20,4 +20,5 @@ urlpatterns = [
     path('projects/', include('projects.urls')),
     path('commercial/', include('commercial_proposal.urls')),
     path('nma/', include('nmacost.urls')),
+    path('itcost/', include('itcost.urls')),
 ]

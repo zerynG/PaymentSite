@@ -60,6 +60,15 @@ def proposal_detail(request, pk):
     return render(request, 'commercial_proposal/detail.html', {'proposal': proposal})
 
 
+def delete_proposal(request, pk):
+    """Удаление коммерческого предложения с подтверждением."""
+    proposal = get_object_or_404(CommercialProposal, pk=pk)
+    if request.method == "POST":
+        proposal.delete()
+        return redirect('commercial_proposal:proposal_list')
+    return render(request, 'commercial_proposal/confirm_delete.html', {'proposal': proposal})
+
+
 def download_pdf(request, pk):
     proposal = get_object_or_404(CommercialProposal, pk=pk)
     html = render_to_string('commercial_proposal/template_pdf.html', {'proposal': proposal})

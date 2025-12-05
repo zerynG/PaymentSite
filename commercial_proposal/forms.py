@@ -20,14 +20,25 @@ class CommercialProposalForm(forms.ModelForm):
 class ServiceItemForm(forms.ModelForm):
     class Meta:
         model = ServiceItem
-        fields = ['name', 'hours', 'start_date', 'end_date', 'cost']
+        fields = ['name', 'hours', 'start_date', 'end_date', 'cost', 'monthly_cost', 'is_indefinite']
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control'}),
             'hours': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.5'}),
             'start_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'end_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'cost': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01'}),
+            'monthly_cost': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01'}),
+            'is_indefinite': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Делаем поля необязательными
+        self.fields['hours'].required = False
+        self.fields['start_date'].required = False
+        self.fields['end_date'].required = False
+        self.fields['cost'].required = False
+        self.fields['monthly_cost'].required = False
 
 ServiceItemFormSet = forms.inlineformset_factory(
     CommercialProposal, ServiceItem, form=ServiceItemForm, extra=1, can_delete=True

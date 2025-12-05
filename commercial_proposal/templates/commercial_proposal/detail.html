@@ -36,15 +36,25 @@
                             <th>Часы</th>
                             <th>Период</th>
                             <th>Стоимость</th>
+                            <th>Сумма в месяц</th>
+                            <th>Бессрочный</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for service in proposal.services.all %}
                         <tr>
                             <td>{{ service.name }}</td>
-                            <td>{{ service.hours }}</td>
-                            <td>{{ service.start_date }} - {{ service.end_date }}</td>
-                            <td>{{ service.cost }} руб.</td>
+                            <td>{{ service.hours|default:"—" }}</td>
+                            <td>
+                                {% if service.is_indefinite %}
+                                    Бессрочно
+                                {% else %}
+                                    {{ service.start_date }} - {{ service.end_date }}
+                                {% endif %}
+                            </td>
+                            <td>{{ service.cost|default:"—" }} {% if service.cost %}руб.{% endif %}</td>
+                            <td>{{ service.monthly_cost|default:"—" }} {% if service.monthly_cost %}руб.{% endif %}</td>
+                            <td>{% if service.is_indefinite %}Да{% else %}Нет{% endif %}</td>
                         </tr>
                         {% endfor %}
                     </tbody>

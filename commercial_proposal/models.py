@@ -24,10 +24,12 @@ class CommercialProposal(models.Model):
 class ServiceItem(models.Model):
     proposal = models.ForeignKey(CommercialProposal, on_delete=models.CASCADE, related_name='services')
     name = models.CharField(max_length=200, verbose_name="Название услуги")
-    hours = models.DecimalField(max_digits=8, decimal_places=2, verbose_name="Количество часов")
-    start_date = models.DateField(verbose_name="Дата начала")
-    end_date = models.DateField(verbose_name="Дата окончания")
-    cost = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Стоимость")
+    hours = models.DecimalField(max_digits=8, decimal_places=2, verbose_name="Количество часов", blank=True, null=True)
+    start_date = models.DateField(verbose_name="Дата начала", blank=True, null=True)
+    end_date = models.DateField(verbose_name="Дата окончания", blank=True, null=True)
+    cost = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Стоимость", blank=True, null=True)
+    monthly_cost = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Сумма в месяц", blank=True, null=True)
+    is_indefinite = models.BooleanField(default=False, verbose_name="Бессрочный срок")
 
     class Meta:
         verbose_name = "Позиция услуги"

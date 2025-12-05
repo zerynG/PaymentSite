@@ -41,6 +41,9 @@
                             <i class="fas fa-eye"></i>
                         </a>
                         <a href="{% url 'commercial_proposal:download_pdf' proposal.pk %}" class="btn btn-sm btn-danger">PDF</a>
+                        <a href="{% url 'commercial_proposal:delete_proposal' proposal.pk %}" class="btn btn-sm btn-outline-danger">
+                            <i class="fas fa-trash"></i>
+                        </a>
                     </td>
                 </tr>
                 {% endfor %}

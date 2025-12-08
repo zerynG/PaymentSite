@@ -54,8 +54,17 @@ class Contractor(models.Model):
         Расчет стоимости услуг исполнителя.
         su = ((cez * suz) + ((cez * suz) * ns))
         """
+        from decimal import Decimal
+        
+        # Преобразуем все значения в Decimal для корректных вычислений
+        unit_count = Decimal(str(unit_count))
+        
         if rate is None:
             rate = self.default_rate
+        if rate is None:
+            return Decimal('0')
+        
+        rate = Decimal(str(rate))
         if unit_type is None:
             unit_type = self.default_unit
 
@@ -63,12 +72,12 @@ class Contractor(models.Model):
 
         # Налоговая ставка применяется только для ГПХ
         if self.contract_type == 'GPH':
-            tax_multiplier = self.tax_rate / 100
+            tax_multiplier = self.tax_rate / Decimal('100')
             total_cost = base_cost + (base_cost * tax_multiplier)
         else:
             total_cost = base_cost
 
-        return round(total_cost, 2)
+        return total_cost
 
 
 class Service(models.Model):

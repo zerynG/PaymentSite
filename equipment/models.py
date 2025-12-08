@@ -63,7 +63,10 @@ class Equipment(models.Model):
 
     def calculate_service_cost(self, quantity):
         """Расчет стоимости услуг"""
-        return quantity * self.service_cost_per_unit
+        from decimal import Decimal
+        # Преобразуем quantity в Decimal для корректного умножения
+        quantity_decimal = Decimal(str(quantity))
+        return quantity_decimal * self.service_cost_per_unit
 
 
     @classmethod

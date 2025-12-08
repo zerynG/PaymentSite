@@ -82,14 +82,22 @@
                                 {% endif %}
                             </td>
                             <td>
-                                <a href="{% url 'projects:project_detail' project.pk %}" 
-                                   class="btn btn-sm btn-info">
-                                    <i class="fas fa-eye"></i>
-                                </a>
-                                <a href="{% url 'projects:project_detail' project.pk %}" 
-                                   class="btn btn-sm btn-warning">
-                                    <i class="fas fa-edit"></i>
-                                </a>
+                                <div class="btn-group" role="group">
+                                    <a href="{% url 'projects:project_detail' project.pk %}" 
+                                       class="btn btn-sm btn-info" title="Просмотр">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <a href="{% url 'projects:project_detail' project.pk %}" 
+                                       class="btn btn-sm btn-warning" title="Редактировать">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a href="{% url 'projects:project_delete' project.pk %}" 
+                                       class="btn btn-sm btn-danger" 
+                                       title="Удалить"
+                                       onclick="return confirm('Вы уверены, что хотите удалить проект \"{{ project.name }}\"? Это действие нельзя отменить!');">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                </div>
                             </td>
                         </tr>
                         {% endfor %}

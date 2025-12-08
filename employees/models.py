@@ -46,12 +46,18 @@ class Employee(models.Model):
 
     def calculate_daily_rate(self, working_days_in_month):
         """Рассчитывает стоимость одного рабочего дня"""
+        from decimal import Decimal
+        
         if working_days_in_month <= 0:
-            return 0
-        base_salary = float(self.salary)
-        tax_amount = base_salary * (float(self.tax_rate) / 100)
+            return Decimal('0')
+        
+        # Используем Decimal для всех вычислений
+        base_salary = self.salary  # Уже Decimal
+        tax_rate_decimal = Decimal(str(self.tax_rate))
+        tax_amount = base_salary * (tax_rate_decimal / Decimal('100'))
         total_cost = base_salary + tax_amount
-        return total_cost / working_days_in_month
+        working_days = Decimal(str(working_days_in_month))
+        return total_cost / working_days
 
     def calculate_work_cost(self, start_date, end_date, working_days_per_month):
         """
@@ -60,6 +66,7 @@ class Employee(models.Model):
         """
         from datetime import datetime, timedelta
         from collections import defaultdict
+        from decimal import Decimal
 
         # Группируем дни по месяцам
         monthly_days = defaultdict(int)
@@ -70,11 +77,12 @@ class Employee(models.Model):
             monthly_days[month_key] += 1
             current_date += timedelta(days=1)
 
-        total_cost = 0
+        total_cost = Decimal('0')
 
         for month_key, days_count in monthly_days.items():
             if month_key in working_days_per_month:
                 daily_rate = self.calculate_daily_rate(working_days_per_month[month_key])
-                total_cost += daily_rate * days_count
+                # daily_rate теперь Decimal, days_count - int, преобразуем в Decimal
+                total_cost += daily_rate * Decimal(str(days_count))
 
         return total_cost
